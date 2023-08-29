@@ -74,8 +74,7 @@ function getM3U8(m3u8Url, progressElement) {
         url: m3u8Url,
         success: resp => {
             tsUrlList = [],
-            resp.split(`
-`).forEach(tsUrl => {
+            resp.split('\n').forEach(tsUrl => {
                 if (tsUrl.toUpperCase().indexOf("#EXTINF:") > -1) {
                     durationSecond += parseFloat(tsUrl.split("#EXTINF:")[1]);
                 }
@@ -295,11 +294,14 @@ function transformUrl(inputString) {
     }
 
     const cutBack = frontCut.substring(0, indexOfVersion + 1);
-    const resultString = cutBack.replace("http", "https")
-        .replace("cfvod", "cdnapisec")
+    const resultString = cutBack.replace("cfvod", "cdnapisec")
         .replace("thumbnail", "playManifest")
         .replace("entry_id", "entryId")
         + "format/applehttp/protocol/https/a.m3u8?responseFormat=jsonp&callback=";
+
+    if (resultString.startsWith("http://")) {
+        resultString = resultString.replace("http://", "https://");
+    }
 
     return resultString;
 }
